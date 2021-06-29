@@ -33,7 +33,7 @@ import numpy as np
 import cv2
 
 # 모델 위치
-model_filename = 'C:\\Users\\LeeSooHwan\\Desktop\\interactiveZoom\\keras_model.h5'
+model_filename = 'C:\\Users\\LeeSooHwan\\Desktop\\Interactive-Zoom-Practice\\keras_model.h5'
 
 # 케라스 모델 가져오기
 model = tensorflow.keras.models.load_model(model_filename)
