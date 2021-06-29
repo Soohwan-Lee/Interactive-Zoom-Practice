@@ -5,7 +5,7 @@ import cv2
 img = cv2.imread(
     'C:\\Users\\LeeSooHwan\\Desktop\\Interactive-Zoom-Practice\\questionSmall.png')
 
-png = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+# png = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
 
 
 # # Save the transparency channel alpha
@@ -42,8 +42,8 @@ while(True):
     ret, frame = cap.read()
 
     # add image to frame
-    # frame[y:y+img_height, x:x+img_width] = img
-    added_image = cv2.addWeighted(frame, 0.4, png, 0.1, 0)
+    frame[y:y+img_height, x:x+img_width] = img
+    # added_image = cv2.addWeighted(frame, 0.4, png, 0.1, 0)
 
     # Display the resulting frame
     cv2.imshow('Webcam & PNG Test', frame)
