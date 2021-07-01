@@ -1,11 +1,23 @@
 #!/usr/bin/python3
 import cv2
+from PIL import Image
+import numpy as np
+import random
 
 # load the overlay image. size should be smaller than video frame size
-img = cv2.imread(
-    'C:\\Users\\LeeSooHwan\\Desktop\\Interactive-Zoom-Practice\\questionSmall.png')
+# img = cv2.imread('questionSmall.png')
+img = Image.open('questionSmall.png').convert('RGBA')
+R, G, B, A = img.split()
+img = Image.merge('RGBA', (B, G, R, A))
 
-png = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
+<<<<<<< HEAD
+<<<<<<< HEAD
+# # Get Image dimensions
+# img_height, img_width, _ = img.shape
+=======
+=======
+>>>>>>> 8c396e549ef473f9ebe64ea542138ed9f228b5e9
+# png = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
 
 
 # # Save the transparency channel alpha
@@ -15,6 +27,7 @@ png = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
 
 # Get Image dimensions
 img_height, img_width, _ = img.shape
+>>>>>>> 5aa44fd416358ca141c7ebafa0f5a402ee3f95ad
 
 # Start Capture
 cap = cv2.VideoCapture(0)
@@ -23,9 +36,9 @@ cap = cv2.VideoCapture(0)
 frame_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
 frame_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
 
-# Print dimensions
-print('image dimensions (HxW):', img_height, "x", img_width)
-print('frame dimensions (HxW):', int(frame_height), "x", int(frame_width))
+# # Print dimensions
+# print('image dimensions (HxW):', img_height, "x", img_width)
+# print('frame dimensions (HxW):', int(frame_height), "x", int(frame_width))
 
 # Decide X,Y location of overlay image inside video frame.
 # following should be valid:
@@ -41,9 +54,25 @@ while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
 
-    # add image to frame
+<<<<<<< HEAD
+<<<<<<< HEAD
+    # # add image to frame
     # frame[y:y+img_height, x:x+img_width] = img
-    added_image = cv2.addWeighted(frame, 0.4, png, 0.1, 0)
+
+    # Make PIL image from frame, paste in speedo, revert to OpenCV frame
+    pilim = Image.fromarray(frame)
+    pilim.paste(img, box=(0, 20), mask=img)
+    frame = np.array(pilim)
+=======
+    # add image to frame
+    frame[y:y+img_height, x:x+img_width] = img
+    # added_image = cv2.addWeighted(frame, 0.4, png, 0.1, 0)
+>>>>>>> 5aa44fd416358ca141c7ebafa0f5a402ee3f95ad
+=======
+    # add image to frame
+    frame[y:y+img_height, x:x+img_width] = img
+    # added_image = cv2.addWeighted(frame, 0.4, png, 0.1, 0)
+>>>>>>> 8c396e549ef473f9ebe64ea542138ed9f228b5e9
 
     # Display the resulting frame
     cv2.imshow('Webcam & PNG Test', frame)
