@@ -10,27 +10,11 @@ img = Image.open('questionSmall.png').convert('RGBA')
 R, G, B, A = img.split()
 img = Image.merge('RGBA', (B, G, R, A))
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-# # Get Image dimensions
-# img_height, img_width, _ = img.shape
-=======
-=======
->>>>>>> 8c396e549ef473f9ebe64ea542138ed9f228b5e9
-=======
->>>>>>> fcae5353ca126e6986e2f6bc23a728c3d5b42f72
-# png = cv2.cvtColor(img, cv2.COLOR_BGRA2BGR)
-
-
 # # Save the transparency channel alpha
 # *_, alpha = cv2.split(img)
 
-# img = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-# Get Image dimensions
-img_height, img_width, _ = img.shape
->>>>>>> 5aa44fd416358ca141c7ebafa0f5a402ee3f95ad
+# # Get Image dimensions
+# img_height, img_width, _ = img.shape
 
 # Start Capture
 cap = cv2.VideoCapture(0)
@@ -57,9 +41,6 @@ while(True):
     # Capture frame-by-frame
     ret, frame = cap.read()
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
     # # add image to frame
     # frame[y:y+img_height, x:x+img_width] = img
 
@@ -67,21 +48,6 @@ while(True):
     pilim = Image.fromarray(frame)
     pilim.paste(img, box=(0, 20), mask=img)
     frame = np.array(pilim)
-=======
-    # add image to frame
-    frame[y:y+img_height, x:x+img_width] = img
-    # added_image = cv2.addWeighted(frame, 0.4, png, 0.1, 0)
->>>>>>> 5aa44fd416358ca141c7ebafa0f5a402ee3f95ad
-=======
-    # add image to frame
-    frame[y:y+img_height, x:x+img_width] = img
-    # added_image = cv2.addWeighted(frame, 0.4, png, 0.1, 0)
->>>>>>> 8c396e549ef473f9ebe64ea542138ed9f228b5e9
-=======
-    # add image to frame
-    frame[y:y+img_height, x:x+img_width] = img
-    # added_image = cv2.addWeighted(frame, 0.4, png, 0.1, 0)
->>>>>>> fcae5353ca126e6986e2f6bc23a728c3d5b42f72
 
     # Display the resulting frame
     cv2.imshow('Webcam & PNG Test', frame)
