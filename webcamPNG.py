@@ -16,8 +16,8 @@ img = Image.merge('RGBA', (B, G, R, A))
 # # Get Image dimensions
 # img_height, img_width, _ = img.shape
 
-# Start Capture
-cap = cv2.VideoCapture(0)
+# Start Capture - 0 for Window, 1 for Mac
+cap = cv2.VideoCapture(1)
 
 # Get frame dimensions
 frame_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
