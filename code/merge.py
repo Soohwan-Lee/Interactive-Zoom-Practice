@@ -92,13 +92,13 @@ def teachableMachine(capture):
                             cv2.FONT_HERSHEY_PLAIN, fontScale, fontColor, fontThickness)
                 # print('Background')
 
-            # Show webcam video through additional window
-            cv2.imshow("Interactive Zoom", frame_fliped)
+            # # Show webcam video through additional window
+            # cv2.imshow("Interactive Zoom", frame_fliped)
 
-            # # Send webcam video through virtual cam
-            # cam.send(frame_fliped)
-            # # Wait until it's time for the next frame.
-            # cam.sleep_until_next_frame()
+            # Send webcam video through virtual cam
+            cam.send(frame_fliped)
+            # Wait until it's time for the next frame.
+            cam.sleep_until_next_frame()
 
 
 if __name__ == "__main__":
