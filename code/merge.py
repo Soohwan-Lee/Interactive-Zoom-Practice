@@ -103,7 +103,7 @@ def teachableMachine(capture):
 
 if __name__ == "__main__":
     model = loadModel('..\\model\\keras_model.h5')
-    img = png.loadIMG('..\\image\\questionSmall.png')
+    img = png.loadIMG('..\\effect\\questionSmall.png')
     capture = captureCamera()
 
     # Query final capture device values (may be different from preferred settings).
