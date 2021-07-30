@@ -39,7 +39,7 @@ def showWebcam(frame):
 
 if __name__ == "__main__":
     # load image through the loadIMG function
-    img = loadIMG('..\\effect\\questionSmall.png')
+    img = loadIMG('.\\effect\\questionSmall.png')
 
     # Start Capture - 0 for Window, 1 for Mac
     cap = cv2.VideoCapture(1)

@@ -59,8 +59,7 @@ def predict(model, frame):
 def teachableMachine(capture):
     # video preprocessing, predict by model,
     with pyvirtualcam.Camera(width, height, fps_in, fmt=PixelFormat.BGR, print_fps=fps_in) as cam:
-        print(
-            f'Virtual cam started: {cam.device} ({cam.width}x{cam.height} @ {cam.fps}fps)')
+        print(f'Virtual cam started: {cam.device} ({cam.width}x{cam.height} @ {cam.fps}fps)')
 
         while True:
             ret, frame = capture.read()
@@ -102,8 +101,8 @@ def teachableMachine(capture):
 
 
 if __name__ == "__main__":
-    model = loadModel('..\\model\\keras_model.h5')
-    img = png.loadIMG('..\\effect\\questionSmall.png')
+    model = loadModel('.\\model\\keras_model.h5')
+    img = png.loadIMG('.\\effect\\questionSmall.png')
     capture = captureCamera()
 
     # Query final capture device values (may be different from preferred settings).
@@ -111,6 +110,5 @@ if __name__ == "__main__":
     height = int(capture.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps_in = capture.get(cv2.CAP_PROP_FPS)
     print(f'Webcam capture started ({width}x{height} @ {fps_in}fps)')
-    fps_out = 20
 
     teachableMachine(capture)
