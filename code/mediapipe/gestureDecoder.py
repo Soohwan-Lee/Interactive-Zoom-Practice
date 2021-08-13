@@ -16,10 +16,10 @@ mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
 with open('.//code//mediapipe//body_language.pkl', 'rb') as f:
     model = pickle.load(f)
 
-# ### Video Capture for Window
-# cap = cv2.VideoCapture(0)
-### Video Capture for Mac
-cap = cv2.VideoCapture(1)
+### Video Capture for Window
+cap = cv2.VideoCapture(0)
+# ### Video Capture for Mac
+# cap = cv2.VideoCapture(1)
 cap.set(3, 1280)
 cap.set(4, 720)
 
