@@ -12,12 +12,17 @@ mp_drawing = mp.solutions.drawing_utils  # Drawing helpers
 mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
 
 
-with open('.\\code\\mediapipe\\body_language.pkl', 'rb') as f:
+# with open('.\\code\\mediapipe\\body_language.pkl', 'rb') as f:
+with open('.//code//mediapipe//body_language.pkl', 'rb') as f:
     model = pickle.load(f)
 
-cap = cv2.VideoCapture(0)
+# ### Video Capture for Window
+# cap = cv2.VideoCapture(0)
+### Video Capture for Mac
+cap = cv2.VideoCapture(1)
 cap.set(3, 1280)
 cap.set(4, 720)
+
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps_in = cap.get(cv2.CAP_PROP_FPS)
