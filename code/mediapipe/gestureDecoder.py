@@ -143,7 +143,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             except:
                 pass
 
-            cv2.imshow('Raw Webcam Feed', image)
+            cv2.imshow('Interactive Zoom Demo', image)
             cam.send(image)
             cam.sleep_until_next_frame()
 
