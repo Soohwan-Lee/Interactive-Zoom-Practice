@@ -89,16 +89,16 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
     #             # Make Detections
     #             X = pd.DataFrame([row])
                 
-    #             # Make Prediction
-    #             body_language_class = model.predict(X)[0]
-    #             body_language_prob = model.predict_proba(X)[0]
+                # # Make Prediction
+                # body_language_class = model.predict([row])[0]
+                # body_language_prob = model.predict_proba([row])[0]
                 
-                # 100ms (Making Dataframe & Predict)
+                # 300ms (Making Dataframe & Predict)
                 duration = time.time() - beginTime
-                if duration > 0.5:
-                    X = pd.DataFrame([row])
-                    body_language_class = model.predict(X)[0]
-                    body_language_prob = model.predict_proba(X)[0]
+                if duration > 0.3:
+                    # X = pd.DataFrame([row])
+                    body_language_class = model.predict([row])[0]
+                    body_language_prob = model.predict_proba([row])[0]
                     readData = True
                 
                 ### Third point (Debugging)
