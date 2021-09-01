@@ -97,6 +97,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 duration = time.time() - beginTime
                 if duration > 0.3:
                     # X = pd.DataFrame([row])
+                    print(type([row]))
                     body_language_class = model.predict([row])[0]
                     body_language_prob = model.predict_proba([row])[0]
                     readData = True
