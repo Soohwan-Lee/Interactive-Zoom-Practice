@@ -1,4 +1,3 @@
-from sklearn.metrics import accuracy_score  # Accuracy metrics
 import pickle
 import pyvirtualcam
 from pyvirtualcam import PixelFormat
@@ -7,45 +6,75 @@ import webcamPNG as png
 import cv2
 import mediapipe as mp
 import numpy as np
-# import pandas as pd
 import time
 import os
 import os.path
 
-# open the sample PNG (question.png)
-sampleImg = png.loadIMG('.\\effect\\questionSmall.png')
-
 # Load Pose_Hand_Images with Array
 pose_hand_imgs = []
-path = "./effect/sample/"
+path = ".//effect//sample_pose_hand//"
 fileType = '.png'
 fileList = os.listdir(path)
 fileList.sort()
-print(fileList)
 for i in range(0, 20):
     pose_hand_imgs.append(Image.open(path+str(i)+fileType))
 
-# mp_drawing = mp.solutions.drawing_utils  # Drawing helpers
-mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
+# Load Face_Images with Array
+face_imgs = []
+path = ".//effect//sample_face//"
+fileType = '.png'
+fileList = os.listdir(path)
+fileList.sort()
+for i in range(0, 3):
+    face_imgs.append(Image.open(path+str(i)+fileType))
+
+# Set the directory path
+path_rawData = ".//code//mediapipe//rawData"
+path_model = ".//code//mediapipe//model"
+
+# Set the model name
+pose_hand_model = "//210916pose_hand.pkl"
+face_model = "//210916face.pkl"
 
 # Load Model
-with open('.//code//mediapipe//body_language.pkl', 'rb') as f:
-    model = pickle.load(f)
+with open(path_model + pose_hand_model, 'rb') as f:
+    pose_hand_model = pickle.load(f)
+with open(path_model + face_model, 'rb') as f:
+    face_model = pickle.load(f)
+
+# Set the coords number
+num_pose_coords = 22
+num_right_hand_coords = 20
+num_left_hand_coords = 20
+num_pose_hand_coords = num_pose_coords + num_right_hand_coords + num_left_hand_coords
+num_face_coords = 467
+
+# mp_drawing = mp.solutions.drawing_utils  # Drawing helpers
+mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
 
 # Video Capture for Window
 cap = cv2.VideoCapture(0)
 # ### Video Capture for Mac
 # cap = cv2.VideoCapture(1)
+
+# Set the Frame Size
 cap.set(3, 1280)
 cap.set(4, 720)
-prevTime = 0
-readData = True
 
+# Variable for calculate FPS
+prevTime = 0
+
+# Boolean variables for Reading Data
+read_pose_hand = True
+read_face = True
+
+# Time interval of Reading Data for pose_hand & face
+timeInterval = 0.2
+
+# Get Frame's width & height, fps
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 fps_in = cap.get(cv2.CAP_PROP_FPS)
-# cap = cv2.flip(originalCap, 1)
-
 
 # Initiate holistic model
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
@@ -56,17 +85,22 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
         while cap.isOpened():
             ret, frame = cap.read()
 
-            # Start point: Timer for make dataframe
-            if readData:
-                beginTime = time.time()
-                readData = False
+            # Start point: Timer for recieving pose_hand_data
+            if read_pose_hand:
+                beginTime_pose_hand = time.time()
+                read_pose_hand = False
+
+            # Start point: Tiemr for recieving face_data
+            if read_face:
+                beginTime_face = beginTime_pose_hand + timeInterval
+                read_face = False
 
             # Start point: Timer for Debugging
             initialTime = time.time()
 
             # Recolor Feed
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image = cv2.flip(image, 1)
+            # image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            image = cv2.flip(frame, 1)
             image.flags.writeable = False
 
             # Make Detectionsq
@@ -76,79 +110,103 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-            # First point (Debugging)
-            firstTime = time.time() - initialTime
-            cv2.putText(image, f'1: {round(firstTime,3)}',
-                        (20, 150), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 1)
-
-            # Export coordinates
+            # Export Pose-Hand coordinates
             try:
                 # Extract Pose landmarks
                 pose = results.pose_landmarks.landmark
-                pose_row = list(np.array(
-                    [[landmark.x, landmark.y, landmark.z, landmark.visibility] for landmark in pose]).flatten())
+                pose_row = list(np.array([[pose[i].x-pose[0].x, pose[i].y-pose[0].y] 
+                            for i in range(1, num_pose_coords+1)]).flatten())
+                # Extract "RIGHT" Hand lanmarks
+                try:
+                    righthand = results.left_hand_landmarks.landmark
+                    righthand_row = list(np.array([[righthand[i].x - righthand[0].x, righthand[i].y - righthand[0].y]
+                                for i in range(1,num_right_hand_coords+1)]).flatten())
+                except:
+                    righthand_row = [0 for i in range(num_right_hand_coords*2)]
 
-                # Extract Face landmarks
-                face = results.face_landmarks.landmark
-                face_row = list(np.array(
-                    [[landmark.x, landmark.y, landmark.z, landmark.visibility] for landmark in face]).flatten())
-
+                # Extract "LEFT" Hand lanmarks
+                try:
+                    lefthand = results.right_hand_landmarks.landmark
+                    lefthand_row = list(np.array([[lefthand[i].x - lefthand[0].x, lefthand[i].y - lefthand[0].y]
+                                                    for i in range(1,num_left_hand_coords+1)]).flatten())
+                except:
+                    lefthand_row = [0 for i in range(num_left_hand_coords*2)]
+                
                 # Concate rows
-                row = pose_row+face_row
-
-                # Second point (Debugging)
-                secondTime = time.time() - initialTime
-                cv2.putText(image, f'2: {round(secondTime,3)}',
-                            (20, 200), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 1)
-
-    #             # Make Detections
-    #             X = pd.DataFrame([row])
-
+                pose_hand_row = pose_row + righthand_row + lefthand_row
+                
                 # # Make Prediction
-                # body_language_class = model.predict([row])[0]
-                # body_language_prob = model.predict_proba([row])[0]
+                # pose_hand_class = pose_hand_model.predict([pose_hand_row])[0]
+                # pose_hand_prob = pose_hand_model.predict_proba([pose_hand_row])[0]
 
-                # 300ms (Making Dataframe & Predict)
-                duration = time.time() - beginTime
-                if duration > 0.3:
-                    # X = pd.DataFrame([row])
-                    print(type([row]))
-                    body_language_class = model.predict([row])[0]
-                    body_language_prob = model.predict_proba([row])[0]
-                    readData = True
-
-                # Third point (Debugging)
-                thirdTime = time.time() - initialTime
-                cv2.putText(image, f'3: {round(thirdTime,3)}',
-                            (20, 250), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 1)
+                # Make prediction for 0.5 sec
+                duration = time.time() - beginTime_pose_hand
+                if duration > timeInterval:
+                    print("pose_hand")
+                    pose_hand_class = pose_hand_model.predict([pose_hand_row])[0]
+                    pose_hand_prob = pose_hand_model.predict_proba([pose_hand_row])[0]
+                    read_pose_hand = True
 
                 # Add png image
-                if body_language_class == 'Question':
-                    # show png file of question mark
-                    pilim = Image.fromarray(image)
-                    pilim.paste(sampleImg, box=(0, 500), mask=sampleImg)
-                    image = np.array(pilim)
-
-                # Fourth point (Debugging)
-                fourthTime = time.time() - initialTime
-                cv2.putText(image, f'4: {round(fourthTime,3)}',
-                            (20, 300), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 1)
-
+                pilim = Image.fromarray(image)
+                pilim.paste(pose_hand_imgs[pose_hand_class], box=(0, 500), mask=pose_hand_imgs[pose_hand_class])
+                image = np.array(pilim)
+                        
                 # Get status box
-                cv2.rectangle(image, (0, 0), (250, 60), (245, 117, 16), -1)
-
+                cv2.rectangle(image, (0,0), (250, 60), (245, 117, 16), -1)
+                
                 # Display Class
-                cv2.putText(image, 'CLASS', (95, 12),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                cv2.putText(image, body_language_class.split(' ')[
-                            0], (90, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-
+                cv2.putText(image, 'CLASS'
+                            , (95,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, str(pose_hand_class)
+                            , (90,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                
                 # Display Probability
-                cv2.putText(image, 'PROB', (15, 12),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
-                cv2.putText(image, str(round(body_language_prob[np.argmax(body_language_prob)], 2)), (
-                    10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(image, 'PROB'
+                            , (15,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, str(round(pose_hand_prob[np.argmax(pose_hand_prob)],2))
+                            , (10,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            except:
+                pass
 
+            # Export Face coordinates
+            try:
+                # Extract Face landmarks
+                face = results.face_landmarks.landmark
+                face_row = list(np.array([[face[i].x - face[0].x, face[i].y - face[0].y]
+                                                    for i in range(1,num_face_coords+1)]).flatten())
+                
+                # # Make Prediction
+                # face_class = face_model.predict([face_row])[0]
+                # face_prob = face_model.predict_proba([face_row])[0]
+
+                # Make prediction for 0.5 sec
+                duration = time.time() - beginTime_face
+                if duration > timeInterval:
+                    print("face")
+                    face_class = face_model.predict([face_row])[0]
+                    face_prob = face_model.predict_proba([face_row])[0]
+                    read_face = True
+                
+                # Add png image
+                pilim = Image.fromarray(image)
+                pilim.paste(face_imgs[face_class], box=(1080, 500), mask=face_imgs[face_class])
+                image = np.array(pilim)
+                
+                # Get status box
+                cv2.rectangle(image, (250,0), (500, 60), (245, 117, 16), -1)
+                
+                # Display Class
+                cv2.putText(image, 'CLASS'
+                            , (345,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, str(face_class)
+                            , (340,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+                
+                # Display Probability
+                cv2.putText(image, 'PROB'
+                            , (265,12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+                cv2.putText(image, str(round(face_prob[np.argmax(face_prob)],2))
+                            , (260,40), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
             except:
                 pass
 
@@ -157,20 +215,18 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             fps = 1 / (currTime - prevTime)
             prevTime = currTime
             cv2.putText(image, f'FPS: {round(fps,3)}', (20, 100),
-                        cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 1)
+                        cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
+
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
             # send video to virtualCam
             cam.send(image)
             cam.sleep_until_next_frame()
 
-            # Fifth point (Debugging)
-            fifthTime = time.time() - initialTime
-            cv2.putText(image, f'5: {round(fifthTime,3)}',
-                        (20, 350), cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 1)
-
             # show video with pop-up screen
             cv2.imshow('Interactive Zoom Demo', image)
 
+            # Press 'q' to quit
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 

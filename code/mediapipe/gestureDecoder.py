@@ -17,7 +17,7 @@ sampleImg = png.loadIMG('.\\effect\\questionSmall.png')
 mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
 
 # Load Model
-with open('.//code//mediapipe//body_language.pkl', 'rb') as f:
+with open('.//code//mediapipe//model//body_language.pkl', 'rb') as f:
     model = pickle.load(f)
 
 # Video Capture for Window
