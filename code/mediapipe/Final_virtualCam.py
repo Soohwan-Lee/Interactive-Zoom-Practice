@@ -90,7 +90,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 beginTime_pose_hand = time.time()
                 read_pose_hand = False
 
-            # Start point: Tiemr for recieving face_data
+            # Start point: Timerr for recieving face_data
             if read_face:
                 beginTime_face = beginTime_pose_hand + timeInterval
                 read_face = False
@@ -98,8 +98,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             # Start point: Timer for Debugging
             initialTime = time.time()
 
-            # Recolor Feed
-            # image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            # Flip Image
             image = cv2.flip(frame, 1)
             image.flags.writeable = False
 
@@ -217,6 +216,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             cv2.putText(image, f'FPS: {round(fps,3)}', (20, 100),
                         cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
 
+            # convert color BRG to RGB
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
             # send video to virtualCam
