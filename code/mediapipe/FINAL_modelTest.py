@@ -12,16 +12,16 @@ import os.path
 
 # Load Pose_Hand_Images with Array
 pose_hand_imgs = []
-path = ".//effect//sample_pose_hand//"
+path = ".//effect//final_pose_hand//"
 fileType = '.png'
 fileList = os.listdir(path)
 fileList.sort()
-for i in range(0, 20):
+for i in range(0, 12):
     pose_hand_imgs.append(Image.open(path+str(i)+fileType))
 
 # Load Face_Images with Array
 face_imgs = []
-path = ".//effect//sample_face//"
+path = ".//effect//final_face//"
 fileType = '.png'
 fileList = os.listdir(path)
 fileList.sort()
