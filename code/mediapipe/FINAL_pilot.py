@@ -32,8 +32,8 @@ path_rawData = ".//code//mediapipe//rawData"
 path_model = ".//code//mediapipe//model"
 
 # Set the model name
-pose_hand_model = "//210916pose_hand.pkl"
-face_model = "//210916face.pkl"
+pose_hand_model = "//210923pose_hand.pkl"
+face_model = "//210923face.pkl"
 
 # Load Model
 with open(path_model + pose_hand_model, 'rb') as f:
@@ -51,10 +51,10 @@ num_face_coords = 467
 mp_drawing = mp.solutions.drawing_utils  # Drawing helpers
 mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
 
-# ### Video Capture for Window
-# cap = cv2.VideoCapture(0)
-### Video Capture for Mac
-cap = cv2.VideoCapture(1)
+### Video Capture for Window
+cap = cv2.VideoCapture(0)
+# ### Video Capture for Mac
+# cap = cv2.VideoCapture(1)
 
 # Set the Frame Size
 cap.set(3, 1280)
@@ -72,8 +72,8 @@ right_hand = True
 left_hand = True
 
 # Set default threshold value
-threshold_pose_hand = 0.6
-threshold_face = 0.8
+threshold_pose_hand = 0.8
+threshold_face = 0.9
 
 # Time interval of Reading Data for pose_hand & face
 timeInterval = 0.2
