@@ -1,12 +1,11 @@
 # Interactive-Zoom-Practice
 
-OBS Download: https://obsproject.com/
-
 Soohwan Lee
 
 2021 Master Graduation Project
 
-Interactive Zoom with Gesture Recognition for Better Communication on Online Meeting
+NEAS: for Better Non-verbal Expression on Online Meeting
+Zoom with Gesture Recognition for Better Communication on Online Meeting
 
 # Quick Start for the pilot test
 
@@ -29,6 +28,3 @@ Interactive Zoom with Gesture Recognition for Better Communication on Online Mee
 
 6. .....?
 
-EXPC LAB
-
-UNIST
