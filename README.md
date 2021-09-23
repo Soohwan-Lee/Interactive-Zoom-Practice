@@ -5,6 +5,7 @@ Soohwan Lee
 2021 Master Graduation Project
 
 NEAS: for Better Non-verbal Expression on Online Meeting
+
 Zoom with Gesture Recognition for Better Communication on Online Meeting
 
 # Quick Start for the pilot test
