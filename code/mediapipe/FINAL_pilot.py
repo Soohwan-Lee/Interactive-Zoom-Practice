@@ -72,8 +72,8 @@ right_hand = True
 left_hand = True
 
 # Set default threshold value
-threshold_pose_hand = 0.8
-threshold_face = 0.9
+threshold_pose_hand = 0.7
+threshold_face = 0.95
 
 # Time interval of Reading Data for pose_hand & face
 timeInterval = 0.2
