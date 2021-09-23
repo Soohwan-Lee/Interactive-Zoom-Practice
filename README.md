@@ -19,7 +19,7 @@ Interactive Zoom with Gesture Recognition for Better Communication on Online Mee
 5. open terminal and go to the directory
 6. run following code
 
-`$ conda create -n py37 python3.7`
+`$ conda create -n py37 python=3.7`
 
 `$ conda activate py37`
 
