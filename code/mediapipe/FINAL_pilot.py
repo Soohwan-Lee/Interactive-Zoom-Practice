@@ -32,8 +32,8 @@ path_rawData = ".//code//mediapipe//rawData"
 path_model = ".//code//mediapipe//model"
 
 # Set the model name
-pose_hand_model = "//210923pose_hand.pkl"
-face_model = "//210923face.pkl"
+pose_hand_model = "//210924pose_hand.pkl"
+face_model = "//210924face.pkl"
 
 # Load Model
 with open(path_model + pose_hand_model, 'rb') as f:
@@ -72,7 +72,7 @@ right_hand = True
 left_hand = True
 
 # Set default threshold value
-threshold_pose_hand = 0.7
+threshold_pose_hand = 0.8
 threshold_face = 0.95
 
 # Time interval of Reading Data for pose_hand & face
