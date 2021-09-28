@@ -51,10 +51,10 @@ num_face_coords = 467
 mp_drawing = mp.solutions.drawing_utils  # Drawing helpers
 mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
 
-### Video Capture for Window
-cap = cv2.VideoCapture(0)
-# ### Video Capture for Mac
-# cap = cv2.VideoCapture(1)
+# ### Video Capture for Window
+# cap = cv2.VideoCapture(0)
+### Video Capture for Mac
+cap = cv2.VideoCapture(1)
 
 # Set the Frame Size
 cap.set(3, 1280)
