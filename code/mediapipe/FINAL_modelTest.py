@@ -207,10 +207,10 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                         if float(pose_hand_prob[np.argmax(pose_hand_prob)]) < threshold_pose_hand:
                             pose_hand_class = 0
 
-                # Add png image
-                pilim = Image.fromarray(image)
-                pilim.paste(pose_hand_imgs[pose_hand_class], box=(0, 500), mask=pose_hand_imgs[pose_hand_class])
-                image = np.array(pilim)
+                # # Add png image
+                # pilim = Image.fromarray(image)
+                # pilim.paste(pose_hand_imgs[pose_hand_class], box=(0, 500), mask=pose_hand_imgs[pose_hand_class])
+                # image = np.array(pilim)
                         
                 # Get status box
                 cv2.rectangle(image, (0,0), (250, 60), (245, 117, 16), -1)
