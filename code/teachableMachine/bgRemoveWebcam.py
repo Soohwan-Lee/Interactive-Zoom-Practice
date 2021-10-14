@@ -36,7 +36,7 @@ with pyvirtualcam.Camera(width, height, fps_in, fmt=PixelFormat.BGR, print_fps=f
     while True:
         success, img = cap.read()
         # imgOut = segmentor.removeBG(img, (255,0,255), threshold=0.83)
-        imgOut = segmentor.removeBG(img, (255, 255, 255), threshold=0.2)
+        imgOut = segmentor.removeBG(img, (255, 255, 255), threshold=0.4)
         #_, imgOut = fpsReader.update(imgOut)
 
         cv2.imshow("Background Remove Example", imgOut)
