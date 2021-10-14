@@ -1,4 +1,0 @@
-name: test
-channels:
-  - defaults
-prefix: /Users/expc/opt/anaconda3/envs/test
