@@ -19,13 +19,12 @@ Zoom with Gesture Recognition for Better Communication on Online Meeting
 5. open terminal and go to the directory
 6. run following code
 
-`$ conda create -n py37 python=3.7`
+`$ conda create -n zoom python=3.7`
 
-`$ conda activate py37`
+`$ conda activate zoom`
 
 `$ pip install -r requirements.txt`
 
 `$ python code/mediapipe/FINAL_pilot.py`
 
-6. .....?
 
