@@ -15,7 +15,7 @@ path = ".//effect//final_pose_hand//"
 fileType = '.png'
 fileList = os.listdir(path)
 fileList.sort()
-for i in range(0, 12):
+for i in range(0, 16):
     pose_hand_imgs.append(Image.open(path+str(i)+fileType))
 
 # Load Face_Images with Array
@@ -32,8 +32,8 @@ path_rawData = ".//code//mediapipe//rawData"
 path_model = ".//code//mediapipe//model"
 
 # Set the model name
-pose_hand_model = "//210924pose_hand.pkl"
-face_model = "//210924face.pkl"
+pose_hand_model = "//211104pose_hand.pkl"
+face_model = "//211104face.pkl"
 
 # Load Model
 with open(path_model + pose_hand_model, 'rb') as f:
@@ -51,10 +51,10 @@ num_face_coords = 467
 mp_drawing = mp.solutions.drawing_utils  # Drawing helpers
 mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
 
-### Video Capture for Window
-cap = cv2.VideoCapture(0)
-# ### Video Capture for Mac
-# cap = cv2.VideoCapture(1)
+# ### Video Capture for Window
+# cap = cv2.VideoCapture(0)
+### Video Capture for Mac
+cap = cv2.VideoCapture(1)
 
 # Set the Frame Size
 cap.set(3, 1280)
@@ -78,8 +78,8 @@ initialPauseTime = 0
 pauseDuration = 0
 
 # Set default threshold value
-threshold_pose_hand = 0.8
-threshold_face = 0.95
+threshold_pose_hand = 0.95
+threshold_face = 0.99
 
 # Time interval of Reading Data for pose_hand & face
 timeInterval = 0.2
@@ -342,8 +342,8 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             cam.send(image)
             cam.sleep_until_next_frame()
 
-            # # show video with pop-up screen
-            cv2.imshow('NEAS Pilot Test Demo', image)
+            # # # show video with pop-up screen
+            # cv2.imshow('NEAS Pilot Test Demo', image)
 
             # Press 'q' to quit
             if cv2.waitKey(10) & 0xFF == ord('q'):
