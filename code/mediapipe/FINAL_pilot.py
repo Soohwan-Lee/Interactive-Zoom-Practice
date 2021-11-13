@@ -15,7 +15,7 @@ path = ".//effect//final_pose_hand//"
 fileType = '.png'
 fileList = os.listdir(path)
 fileList.sort()
-for i in range(0, 16):
+for i in range(0, 17):
     pose_hand_imgs.append(Image.open(path+str(i)+fileType))
 
 # Load Face_Images with Array
@@ -45,16 +45,17 @@ with open(path_model + face_model, 'rb') as f:
 num_pose_coords = 22
 num_right_hand_coords = 20
 num_left_hand_coords = 20
-num_pose_hand_coords = num_pose_coords + num_right_hand_coords + num_left_hand_coords
+num_pose_hand_coords = num_pose_coords + \
+    num_right_hand_coords + num_left_hand_coords
 num_face_coords = 467
 
 mp_drawing = mp.solutions.drawing_utils  # Drawing helpers
 mp_holistic = mp.solutions.holistic  # Mediapipe Solutions
 
-# ### Video Capture for Window
-# cap = cv2.VideoCapture(0)
-### Video Capture for Mac
-cap = cv2.VideoCapture(1)
+### Video Capture for Window
+cap = cv2.VideoCapture(0)
+# # Video Capture for Mac
+# cap = cv2.VideoCapture(1)
 
 # Set the Frame Size
 cap.set(3, 1280)
@@ -78,7 +79,7 @@ initialPauseTime = 0
 pauseDuration = 0
 
 # Set default threshold value
-threshold_pose_hand = 0.95
+threshold_pose_hand = 0.99
 threshold_face = 0.99
 
 # Time interval of Reading Data for pose_hand & face
@@ -104,10 +105,12 @@ def cumulativeAverage(prevAvgArray, newArray, listLength):
         avg = (prevAvgArray * oldWeight) + (newArray * newWeight)
     return avg
 
+
 # Initiate holistic model
 with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
     with pyvirtualcam.Camera(width, height, fps_in, fmt=PixelFormat.BGR, print_fps=fps_in) as cam:
-        print(f'Virtual cam started: {cam.device} ({cam.width}x{cam.height} @ {cam.fps}fps)')
+        print(
+            f'Virtual cam started: {cam.device} ({cam.width}x{cam.height} @ {cam.fps}fps)')
 
         while cap.isOpened():
             ret, frame = cap.read()
@@ -135,53 +138,56 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-
             # # --------------------------------------------------------------------------------------------- #
             # # 1. Draw face landmarks
-            # mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACE_CONNECTIONS, 
+            # mp_drawing.draw_landmarks(image, results.face_landmarks, mp_holistic.FACE_CONNECTIONS,
             #                         mp_drawing.DrawingSpec(color=(80,110,10), thickness=1, circle_radius=1),
             #                         mp_drawing.DrawingSpec(color=(80,256,121), thickness=1, circle_radius=1)
             #                         )
-            
+
             # # 2. Right hand
-            # mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
+            # mp_drawing.draw_landmarks(image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS,
             #                         mp_drawing.DrawingSpec(color=(80,22,10), thickness=2, circle_radius=4),
             #                         mp_drawing.DrawingSpec(color=(80,44,121), thickness=2, circle_radius=2)
             #                         )
 
             # # 3. Left Hand
-            # mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, 
+            # mp_drawing.draw_landmarks(image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS,
             #                         mp_drawing.DrawingSpec(color=(121,22,76), thickness=2, circle_radius=4),
             #                         mp_drawing.DrawingSpec(color=(121,44,250), thickness=2, circle_radius=2)
             #                         )
 
             # # 4. Pose Detections
-            # mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS, 
+            # mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS,
             #                         mp_drawing.DrawingSpec(color=(245,117,66), thickness=2, circle_radius=4),
             #                         mp_drawing.DrawingSpec(color=(245,66,230), thickness=2, circle_radius=2)
             #                         )
             # # --------------------------------------------------------------------------------------------- #
 
-
             # Export Pose-Hand coordinates
             try:
                 # Extract Pose landmarks
                 pose = results.pose_landmarks.landmark
-                pose_row = np.array([[pose[i].x-pose[0].x, pose[i].y-pose[0].y] 
-                            for i in range(1, num_pose_coords+1)]).flatten()
+                pose_row = np.array([[pose[i].x-pose[0].x, pose[i].y-pose[0].y]
+                                     for i in range(1, num_pose_coords+1)]).flatten()
                 # Extract "RIGHT" Hand lanmarks
                 try:
                     righthand = results.left_hand_landmarks.landmark
                     righthand_row = np.array([[righthand[i].x - righthand[0].x, righthand[i].y - righthand[0].y]
-                                for i in range(1,num_right_hand_coords+1)]).flatten()
+                                              for i in range(1, num_right_hand_coords+1)]).flatten()
                     right_hand = True
 
                     # Draw finger tip
-                    cv2.circle(image, (int(1280*righthand[4].x), int(720*righthand[4].y)), 4, (255, 0, 0), -1)
-                    cv2.circle(image, (int(1280*righthand[8].x), int(720*righthand[8].y)), 4, (255, 0, 0), -1)
-                    cv2.circle(image, (int(1280*righthand[12].x), int(720*righthand[12].y)), 4, (255, 0, 0), -1)
-                    cv2.circle(image, (int(1280*righthand[16].x), int(720*righthand[16].y)), 4, (255, 0, 0), -1)
-                    cv2.circle(image, (int(1280*righthand[20].x), int(720*righthand[20].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*righthand[4].x), int(720*righthand[4].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*righthand[8].x), int(720*righthand[8].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*righthand[12].x), int(720*righthand[12].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*righthand[16].x), int(720*righthand[16].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*righthand[20].x), int(720*righthand[20].y)), 4, (255, 0, 0), -1)
 
                 except:
                     righthand_row = [0 for i in range(num_right_hand_coords*2)]
@@ -191,30 +197,37 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                 try:
                     lefthand = results.right_hand_landmarks.landmark
                     lefthand_row = np.array([[lefthand[i].x - lefthand[0].x, lefthand[i].y - lefthand[0].y]
-                                                    for i in range(1,num_left_hand_coords+1)]).flatten()
+                                             for i in range(1, num_left_hand_coords+1)]).flatten()
                     left_hand = True
 
                     # Draw finger tip
-                    cv2.circle(image, (int(1280*lefthand[4].x), int(720*lefthand[4].y)), 4, (255, 0, 0), -1)
-                    cv2.circle(image, (int(1280*lefthand[8].x), int(720*lefthand[8].y)), 4, (255, 0, 0), -1)
-                    cv2.circle(image, (int(1280*lefthand[12].x), int(720*lefthand[12].y)), 4, (255, 0, 0), -1)
-                    cv2.circle(image, (int(1280*lefthand[16].x), int(720*lefthand[16].y)), 4, (255, 0, 0), -1)
-                    cv2.circle(image, (int(1280*lefthand[20].x), int(720*lefthand[20].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*lefthand[4].x), int(720*lefthand[4].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*lefthand[8].x), int(720*lefthand[8].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*lefthand[12].x), int(720*lefthand[12].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*lefthand[16].x), int(720*lefthand[16].y)), 4, (255, 0, 0), -1)
+                    cv2.circle(
+                        image, (int(1280*lefthand[20].x), int(720*lefthand[20].y)), 4, (255, 0, 0), -1)
 
                 except:
                     lefthand_row = [0 for i in range(num_left_hand_coords*2)]
                     left_hand = False
 
                 # Concate rows
-                pose_hand_row = np.concatenate((pose_row, righthand_row, lefthand_row), axis=None)
-                
+                pose_hand_row = np.concatenate(
+                    (pose_row, righthand_row, lefthand_row), axis=None)
+
                 # Average data
                 listLength_pose_hand = listLength_pose_hand + 1
                 if listLength_pose_hand == 1:
                     pose_hand_row_avg = pose_hand_row
                 elif listLength_pose_hand > 1:
-                    pose_hand_row_avg = cumulativeAverage(pose_hand_row_avg, pose_hand_row, listLength_pose_hand)
-                
+                    pose_hand_row_avg = cumulativeAverage(
+                        pose_hand_row_avg, pose_hand_row, listLength_pose_hand)
+
                 # Make prediction for "timeInterval" sec
                 duration = time.time() - beginTime_pose_hand
                 if right_hand == False and left_hand == False:
@@ -224,8 +237,10 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                     if duration > timeInterval:
                         # print("pose_hand")
                         list(pose_hand_row_avg)
-                        pose_hand_class = pose_hand_model.predict([pose_hand_row_avg])[0]
-                        pose_hand_prob = pose_hand_model.predict_proba([pose_hand_row_avg])[0]
+                        pose_hand_class = pose_hand_model.predict(
+                            [pose_hand_row_avg])[0]
+                        pose_hand_prob = pose_hand_model.predict_proba([pose_hand_row_avg])[
+                            0]
                         read_pose_hand = True
                         if float(pose_hand_prob[np.argmax(pose_hand_prob)]) < threshold_pose_hand:
                             pose_hand_class = 0
@@ -236,12 +251,13 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                     pause = True
                     if pose_hand_class == _pose_hand_class:
                         pilim = Image.fromarray(image)
-                        pilim.paste(pose_hand_imgs[pose_hand_class], box=(1040, 40), mask=pose_hand_imgs[pose_hand_class])
+                        pilim.paste(pose_hand_imgs[pose_hand_class], box=(
+                            1040, 40), mask=pose_hand_imgs[pose_hand_class])
                         image = np.array(pilim)
-                        
+
                 # Get status box
-                cv2.rectangle(image, (0,0), (20, 10), (255, 0, 0), -1)
-                
+                cv2.rectangle(image, (0, 0), (20, 10), (255, 0, 0), -1)
+
             except:
                 pass
 
@@ -252,27 +268,38 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                     # Extract Face landmarks
                     face = results.face_landmarks.landmark
                     face_row = np.array([[face[i].x - face[0].x, face[i].y - face[0].y]
-                                                        for i in range(1,num_face_coords+1)]).flatten()
+                                         for i in range(1, num_face_coords+1)]).flatten()
 
                     # Average data
                     listLength_face = listLength_face + 1
                     if listLength_face == 1:
                         face_row_avg = face_row
                     elif listLength_face > 1:
-                        face_row_avg = cumulativeAverage(face_row_avg, face_row, listLength_face)
+                        face_row_avg = cumulativeAverage(
+                            face_row_avg, face_row, listLength_face)
 
                     # Make prediction for "timeInterval" sec
                     duration = time.time() - beginTime_face
                     if duration > timeInterval:
                         # print("face")
                         list(face_row_avg)
-                        face_class = face_model.predict([face_row])[0]
-                        face_prob = face_model.predict_proba([face_row])[0]
+                        face_class = face_model.predict([face_row_avg])[0]
+                        face_prob = face_model.predict_proba([face_row_avg])[0]
                         read_face = True
                         if float(face_prob[np.argmax(face_prob)]) < threshold_face:
-                                face_class = 0
+                            face_class = 0
+
+                        # print('left.x: ' + str(face_row_avg[467]) + ' / left.y: ' + str(face_row_avg[468]))
+                        # print('right.x: ' + str(face_row_avg[907]) + ' / right.y: ' + str(face_row_avg[908]))
+                        # print('up.x: ' + str(face_row_avg[19]) + ' / up.y: ' + str(face_row_avg[20]))
+                        # print('down.x: ' + str(face_row_avg[303]) + ' / down.y: ' + str(face_row_avg[304]))
+
+
+                        # if users look left or down.... solve my mistake through Yame..
+                        if face_row_avg[468] > -0.02  or face_row_avg[467] < -0.1 or face_row_avg[467] > 0.0:
+                            face_class = 0
                         pause = False
-                    
+
                     # Add png image
                     if face_class != 0:
                         pause = True
@@ -280,15 +307,15 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                             pilim = Image.fromarray(image)
                             pilim.paste(face_imgs[face_class], box=(1040, 40), mask=face_imgs[face_class])
                             image = np.array(pilim)
-                    
+
                     # Get status box
-                    cv2.rectangle(image, (20,0), (40, 10), (0, 0, 255), -1)
+                    cv2.rectangle(image, (20, 0), (40, 10), (0, 0, 255), -1)
 
                 except:
                     pass
-            
-            ### if any expression is detected, maintain effect for 2 sec
-            if pause == True and pause_checker == True:    
+
+            # if any expression is detected, maintain effect for 2 sec
+            if pause == True and pause_checker == True:
                 # Start point: Timer for Pause
                 initialPauseTime = time.time()
 
@@ -310,9 +337,9 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                     pilim = Image.fromarray(image)
                     pilim.paste(pose_hand_imgs[_pose_hand_class], box=(1040, 40), mask=pose_hand_imgs[_pose_hand_class])
                     image = np.array(pilim)
-                        
+
                 # Get status box
-                cv2.rectangle(image, (0,0), (20, 10), (255, 0, 0), -1)
+                cv2.rectangle(image, (0, 0), (20, 10), (255, 0, 0), -1)
 
                 if _pose_hand_class == 0:
                     # Add png image
@@ -322,7 +349,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                         image = np.array(pilim)
 
                     # Get status box
-                    cv2.rectangle(image, (20,0), (40, 10), (0, 0, 255), -1)
+                    cv2.rectangle(image, (20, 0), (40, 10), (0, 0, 255), -1)
 
             else:
                 pause = False
