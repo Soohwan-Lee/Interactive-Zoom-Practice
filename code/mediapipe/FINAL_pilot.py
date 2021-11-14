@@ -32,8 +32,8 @@ path_rawData = ".//code//mediapipe//rawData"
 path_model = ".//code//mediapipe//model"
 
 # Set the model name
-pose_hand_model = "//211104pose_hand.pkl"
-face_model = "//211104face.pkl"
+pose_hand_model = "//211107pose_hand_rc.pkl"
+face_model = "//211107face_lr.pkl"
 
 # Load Model
 with open(path_model + pose_hand_model, 'rb') as f:
@@ -79,7 +79,7 @@ initialPauseTime = 0
 pauseDuration = 0
 
 # Set default threshold value
-threshold_pose_hand = 0.99
+threshold_pose_hand = 0.54
 threshold_face = 0.99
 
 # Time interval of Reading Data for pose_hand & face
@@ -237,14 +237,16 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                     if duration > timeInterval:
                         # print("pose_hand")
                         list(pose_hand_row_avg)
-                        pose_hand_class = pose_hand_model.predict(
-                            [pose_hand_row_avg])[0]
-                        pose_hand_prob = pose_hand_model.predict_proba([pose_hand_row_avg])[
-                            0]
+                        pose_hand_class = pose_hand_model.predict([pose_hand_row_avg])[0]
+                        # pose_hand_prob = pose_hand_model.predict_proba([pose_hand_row_avg])[0]        (ridge classifier does not support predict_proba)
+                        d = pose_hand_model.decision_function([pose_hand_row])[0]
+                        pose_hand_prob = np.exp(d) / (1 + np.exp(d))
                         read_pose_hand = True
                         if float(pose_hand_prob[np.argmax(pose_hand_prob)]) < threshold_pose_hand:
                             pose_hand_class = 0
                             pause = False
+
+                print('pose hand prob: ' + str(pose_hand_prob[np.argmax(pose_hand_prob)]))
 
                 # Add png image
                 if pose_hand_class != 0:
@@ -289,11 +291,11 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                         if float(face_prob[np.argmax(face_prob)]) < threshold_face:
                             face_class = 0
 
+                        # Print each the most landmarks...
                         # print('left.x: ' + str(face_row_avg[467]) + ' / left.y: ' + str(face_row_avg[468]))
                         # print('right.x: ' + str(face_row_avg[907]) + ' / right.y: ' + str(face_row_avg[908]))
                         # print('up.x: ' + str(face_row_avg[19]) + ' / up.y: ' + str(face_row_avg[20]))
                         # print('down.x: ' + str(face_row_avg[303]) + ' / down.y: ' + str(face_row_avg[304]))
-
 
                         # if users look left or down.... solve my mistake through Yame..
                         if face_row_avg[468] > -0.02  or face_row_avg[467] < -0.1 or face_row_avg[467] > 0.0:
@@ -329,7 +331,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
             # calculate duration from starting point of pausing
             pauseDuration = time.time() - initialPauseTime
 
-            # Pause the effect for 3 sec
+            # Pause the effect for 2 sec
             sec = 2
             if pauseDuration < sec:
                 # Add png image
