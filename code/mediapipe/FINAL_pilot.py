@@ -245,9 +245,7 @@ with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=
                         if float(pose_hand_prob[np.argmax(pose_hand_prob)]) < threshold_pose_hand:
                             pose_hand_class = 0
                             pause = False
-
-                print('pose hand prob: ' + str(pose_hand_prob[np.argmax(pose_hand_prob)]))
-
+                            
                 # Add png image
                 if pose_hand_class != 0:
                     pause = True
